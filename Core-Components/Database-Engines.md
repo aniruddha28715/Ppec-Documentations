@@ -46,7 +46,7 @@ MariaDB ColumnStore is a specialized columnar storage engine engineered for Onli
 
 
 
-  # Galera Cluster (MariaDB Enterprise Cluster)
+# Galera Cluster (MariaDB Enterprise Cluster)
 
 MariaDB Galera Cluster is a specialized High Availability (HA) solution providing a virtually synchronous, multi-master (active-active) environment designed for continuous uptime and zero data loss.
 
