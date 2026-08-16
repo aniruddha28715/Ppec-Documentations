@@ -5,9 +5,10 @@ MariaDB MaxScale is an advanced database proxy, intelligent query router, and lo
 
 ## Traffic Flow Diagram
 
+```text
 ┌───────────────────────────────────────────────────────────────────────────────┐
 │                              Observability Layer                              │
-│         [ MariaDB Enterprise Manager (Fleet Monitoring & Diagnostics) ]        │
+│         [ MariaDB Enterprise Manager (Fleet Monitoring & Diagnostics) ]       │
 └───────────────────────────────────────▲───────────────────────────────────────┘
                                         │
                          Metrics &      │ Visibility for
@@ -24,6 +25,7 @@ MariaDB MaxScale is an advanced database proxy, intelligent query router, and lo
 │                         Database Infrastructure Layer                         │
 │   [ Transactional / InnoDB ]  [ Analytical / ColumnStore ]  [ HA / Galera ]   │
 └───────────────────────────────────────────────────────────────────────────────┘
+```
 
 # MaxScale Core Objectives ("Max Goal")
 
@@ -60,6 +62,7 @@ MariaDB Enterprise Manager is a fleet-wide management and observability solution
 
 ## Operational Workflow
 
+```text
 [ Client Applications ]
            │
            │ 1. Connection Point
@@ -74,7 +77,7 @@ MariaDB Enterprise Manager is a fleet-wide management and observability solution
 │               │                                                               │
 │               ▼ (Filtered Queries)                                            │
 │ 3. [ SQL Query Parser & Router ]                                              │
-│        ├── Writes (DDL/DML) ──► 4. [ Primary / Write Router ]                  │
+│        ├── Writes (DDL/DML) ──► 4. [ Primary / Write Router ]                 │
 │        └── Reads (SELECTs)  ──► 5. [ Read-Only Load Balancer ]                │
 │                                                                               │
 │ 5. [ Continuous Health Monitor ] ─── (Real-time Protocol Polling) ───┐        │
@@ -88,6 +91,7 @@ MariaDB Enterprise Manager is a fleet-wide management and observability solution
 │                   ▲                                                           │
 └───────────────────┼───────────────────────────────────────────────────────────┘
                     └──────────── (6. Automatic Failover) ─────────────────────┘
+```
 
 # AI & Analytics Innovation (MariaDB Platform)
 
@@ -114,6 +118,7 @@ The MariaDB Enterprise Platform integrates AI operations and high-speed analytic
 │                             Core Engines                               │
 │        [ Enterprise Server ]  │  [ ColumnStore ]  │  [ MaxScale ]      │
 └────────────────────────────────────────────────────────────────────────┘
+```
 
 ## Key Capabilities
 
