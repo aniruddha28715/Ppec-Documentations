@@ -5,28 +5,25 @@ MariaDB MaxScale is an advanced database proxy, intelligent query router, and lo
 
 ## Traffic Flow Diagram
 
-```mermaid
-flowchart TD
-    App[Client Applications] -->|1. Client Connection Point| Proxy
-
-    subgraph Proxy ["MariaDB MaxScale Proxy Layer"]
-        B1[1. Connection Receipt & Auth] --> B2[2. Traffic Analysis & Security Firewall]
-        B2 -->|Pass Filtered Queries| B3{3. SQL Query Parser & Router}
-        
-        B3 -->|Write Operations / DDL / DML| B4[Primary / Write Router]
-        B3 -->|Read Operations / SELECTs| B5[Read-Only Load Balancer]
-        
-        B6((5. Continuous Health Monitor)) -.->|Real-time Protocol Polling| Backend
-    end
-
-    subgraph Backend ["Backend MariaDB Ecosystem"]
-        B4 -->|Direct Writes| Master[(Primary Server / Active Node)]
-        B5 -->|Balance Reads| Replicas[(Read Replicas / Galera Nodes)]
-    end
-
-    B6 -.->|6. Automatic Failover & Re-routing| Master
-```
-
+┌───────────────────────────────────────────────────────────────────────────────┐
+│                              Observability Layer                              │
+│         [ MariaDB Enterprise Manager (Fleet Monitoring & Diagnostics) ]        │
+└───────────────────────────────────────▲───────────────────────────────────────┘
+                                        │
+                         Metrics &      │ Visibility for
+                        Audit Data      │ SREs & DBAs
+                                        │
+┌───────────────────────────────────────┴───────────────────────────────────────┐
+│                           Traffic & Lifecycle Layer                           │
+│        [ MaxScale (Traffic Routing) ]   [ Kubernetes Operator (Lifecycle) ]   │
+└───────────────────┬───────────────────────────────────────┬───────────────────┘
+                    │ Active Traffic                        │ Lifecycle
+                    │ Management                            │ Orchestration
+                    ▼                                       ▼
+┌───────────────────────────────────────────────────────────────────────────────┐
+│                         Database Infrastructure Layer                         │
+│   [ Transactional / InnoDB ]  [ Analytical / ColumnStore ]  [ HA / Galera ]   │
+└───────────────────────────────────────────────────────────────────────────────┘
 
 # MaxScale Core Objectives ("Max Goal")
 
@@ -63,27 +60,83 @@ MariaDB Enterprise Manager is a fleet-wide management and observability solution
 
 ## Operational Workflow
 
-```mermaid
-flowchart TD
-    subgraph Observability ["Observability Layer"]
-        EM["MariaDB Enterprise Manager\n(Fleet Monitoring & Diagnostics)"]
-    end
+[ Client Applications ]
+           │
+           │ 1. Connection Point
+           ▼
+┌───────────────────────────────────────────────────────────────────────────────┐
+│                        MariaDB MaxScale Proxy Layer                           │
+│                                                                               │
+│ 1. [ Connection Receipt & Auth ]                                              │
+│               │                                                               │
+│               ▼                                                               │
+│ 2. [ Traffic Analysis & Security Firewall ]                                   │
+│               │                                                               │
+│               ▼ (Filtered Queries)                                            │
+│ 3. [ SQL Query Parser & Router ]                                              │
+│        ├── Writes (DDL/DML) ──► 4. [ Primary / Write Router ]                  │
+│        └── Reads (SELECTs)  ──► 5. [ Read-Only Load Balancer ]                │
+│                                                                               │
+│ 5. [ Continuous Health Monitor ] ─── (Real-time Protocol Polling) ───┐        │
+└──────────────────┬─────────────────────────────────┬─────────────────┼────────┘
+                   │ Direct                          │ Balance         │
+                   │ Writes                          │ Reads           │
+                   ▼                                 ▼                 │
+┌──────────────────────────────────────────────────────────────────────┴────────┐
+│                          Backend MariaDB Ecosystem                            │
+│    [ Primary Server / Active Node ]      [ Read Replicas / Galera Nodes ]     │
+│                   ▲                                                           │
+└───────────────────┼───────────────────────────────────────────────────────────┘
+                    └──────────── (6. Automatic Failover) ─────────────────────┘
 
-    subgraph Operations ["Traffic & Lifecycle Layer"]
-        MS["MariaDB MaxScale\n(Traffic Routing & Failover)"]
-        K8s["Kubernetes Operator\n(Provisioning & Self-Healing)"]
-    end
+# AI & Analytics Innovation (MariaDB Platform)
 
-    subgraph DataFleet ["Database Infrastructure Layer"]
-        DB1[(Transactional / InnoDB)]
-        DB2[(Analytical / ColumnStore)]
-        DB3[(HA / Galera Cluster)]
-    end
+The MariaDB Enterprise Platform integrates AI operations and high-speed analytical extensions directly into its core architecture, enabling transactional, analytical, vector, and generative AI workloads within a single environment.
 
-    MS -->|Active Traffic Management| DataFleet
-    K8s -->|Lifecycle Orchestration| DataFleet
-    DataFleet -.->|Metrics & Audit Data| EM
-    EM -.->|Visibility for SREs & DBAs| Operations
+---
 
-```
+## Architectural Workflow
+
+```text
+┌────────────────────────────────────────────────────────────────────────┐
+│                        AI & Analytical Interfaces                      │
+│     [ MariaDB AI RAG ]    [ MCP Server ]    [ Vector Search ]          │
+└───────────────────┬────────────────────────────────┬───────────────────┘
+                    │                                │
+                    ▼                                ▼
+┌────────────────────────────────────────────────────────────────────────┐
+│                       Accelerated Analytics Layer                      │
+│            [ MariaDB Exa ]    [ MariaDB Query Accelerator ]            │
+└───────────────────┬────────────────────────────────┬───────────────────┘
+                    │                                │
+                    ▼                                ▼
+┌────────────────────────────────────────────────────────────────────────┐
+│                             Core Engines                               │
+│        [ Enterprise Server ]  │  [ ColumnStore ]  │  [ MaxScale ]      │
+└────────────────────────────────────────────────────────────────────────┘
+
+## Key Capabilities
+
+* **MariaDB AI RAG**  
+  Enterprise Retrieval-Augmented Generation solution enabling semantic search, natural language generation, and AI document processing.
+
+* **MariaDB MCP Server**  
+  Secure interface managing interactions between external AI assistants and the MariaDB data ecosystem.
+
+* **Vector Embedded Search**  
+  Native vector search capabilities embedded directly into the database environment.
+
+* **MariaDB Exa**  
+  High-performance, in-memory analytical database leveraging Massively Parallel Processing (MPP) for large-scale SQL queries.
+
+* **MariaDB Query Accelerator**  
+  Offloads heavy transactional overhead by automatically rerouting complex InnoDB queries to ColumnStore.
+
+---
+
+## Core Engine Integration
+
+* **Enterprise Server:** Hardened foundation providing ACID compliance, data persistence, and DoD STIG certification.
+* **MaxScale:** Intelligent proxy layer securing AI workloads via database firewalls and load balancing.
+* **ColumnStore:** Distributed columnar engine powering the analytics for MariaDB Exa and Query Accelerator.
 
